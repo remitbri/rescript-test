@@ -14,11 +14,11 @@ Run the following in your console:
 $ yarn add --dev rescript-test
 ```
 
-Then add `rescript-test` to your `bsconfig.json`'s `bs-dev-dependencies`:
+Then add `rescript-test` to your `rescript.json`'s `dev-dependencies`:
 
 ```diff
  {
-   "bs-dev-dependencies": [
+   "dev-dependencies": [
 +    "rescript-test",
    ]
  }
@@ -28,9 +28,9 @@ Then add `rescript-test` to your `bsconfig.json`'s `bs-dev-dependencies`:
 
 ```console
 $ # All tests
-$ retest 'test/**/*.bs.js'
+$ retest 'test/**/*.mjs'
 $ # Single file
-$ retest 'test/MyTest.bs.js'
+$ retest 'test/MyTest.mjs'
 ```
 
 ## Testing with DOM
@@ -39,9 +39,9 @@ The test framework can simulate a browser using [JSDOM](https://github.com/jsdom
 
 ```console
 $ # All tests
-$ retest --with-dom 'test/**/*.bs.js'
+$ retest --with-dom 'test/**/*.mjs'
 $ # Single file
-$ retest --with-dom 'test/MyTest.bs.js'
+$ retest --with-dom 'test/MyTest.mjs'
 ```
 
 ## Basics
@@ -62,14 +62,14 @@ test("Equals", () => {
 })
 
 let isCharCode = (a, b) => {
-  a->String.charCodeAt(0) === b
+  a->String.charCodeAt(0) === Some(b)
 }
 
 test("Custom comparator", () => {
   let a = "a"
 
-  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97.0)
-  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 98.0)
+  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97)
+  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 98)
 })
 
 type user = {username: string, id: string}
@@ -171,8 +171,8 @@ testWithRef("Setup & teardown", someRef => {
 If you want to test with React, you can add the following helper as your test utility file:
 
 ```rescript
-@bs.val external window: {..} = "window"
-@bs.send external remove: Dom.element => unit = "remove"
+@val external window: {..} = "window"
+@send external remove: Dom.element => unit = "remove"
 
 let createContainer = () => {
   let containerElement: Dom.element = window["document"]["createElement"]("div")

@@ -31,18 +31,18 @@ test("Should fail", () => {
 })
 
 // test("Throws", () => {
-//   Error.raise(Error.make("Helloooo"))
+//   JsError.throw(JsError.make("Helloooo"))
 // })
 
 test("Should throw", () => {
   throws(() => {
-    Error.raise(Error.make("Helloooo"))
+    JsError.throw(JsError.make("Helloooo"))
   })
   throws(
     ~message=`Should not be a JS error`,
-    ~test=error => error->Error.fromException->Option.isNone,
+    ~test=error => error->JsExn.fromException->Option.isNone,
     () => {
-      Error.raise(Error.make("Helloooo"))
+      JsError.throw(JsError.make("Helloooo"))
     },
   )
 })
