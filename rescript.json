@@ -12,7 +12,7 @@
       "type": "dev"
     }
   ],
-  "bs-dev-dependencies": ["@rescript/core"],
+  "bs-dev-dependencies": [],
   "package-specs": {
     "module": "esmodule",
     "in-source": true
