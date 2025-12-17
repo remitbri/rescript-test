@@ -1,3 +1,9 @@
+## 8.0.0
+
+Changes:
+
+- Upgrade to ReScript 12 (b72b815)
+
 ## 7.0.1
 
 Changes:
