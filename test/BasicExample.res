@@ -1,4 +1,3 @@
-open RescriptCore
 open Test
 
 let intEqual = (~message=?, a: int, b: int) =>
@@ -14,14 +13,14 @@ test("Equals", () => {
 })
 
 let isCharCode = (a, b) => {
-  a->String.charCodeAt(0) === b
+  a->String.charCodeAt(0) == Some(b)
 }
 
 test("Custom comparator", () => {
   let a = "a"
 
-  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97.0)
-  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 98.0)
+  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97)
+  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 98)
 })
 
 type user = {username: string, id: string}

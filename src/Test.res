@@ -1,19 +1,19 @@
 @val external exit: int => unit = "process.exit"
-@val external process: Js.Undefined.t<{..}> = "process"
+@val external process: undefined<{..}> = "process"
 
 let exit = code => {
-  if Js.typeof(process) != "undefined" {
+  if typeof(process) != #undefined {
     exit(code)
   } else {
-    Js.Console.log(`# Exit code: ${code->Js.Int.toString}`)
+    Console.log(`# Exit code: ${code->Int.toString}`)
   }
 }
 
-let red = text => Js.typeof(process) != "undefined" ? `\u001b[31m${text}\u001b[0m` : text
-let green = text => Js.typeof(process) != "undefined" ? `\u001b[32m${text}\u001b[0m` : text
-let pink = text => Js.typeof(process) != "undefined" ? `\u001b[34m${text}\u001b[0m` : text
-let yellow = text => Js.typeof(process) != "undefined" ? `\u001b[33m${text}\u001b[0m` : text
-let grey = text => Js.typeof(process) != "undefined" ? `\u001b[2m${text}\u001b[0m` : text
+let red = text => typeof(process) != #undefined ? `\u001b[31m${text}\u001b[0m` : text
+let green = text => typeof(process) != #undefined ? `\u001b[32m${text}\u001b[0m` : text
+let pink = text => typeof(process) != #undefined ? `\u001b[34m${text}\u001b[0m` : text
+let yellow = text => typeof(process) != #undefined ? `\u001b[33m${text}\u001b[0m` : text
+let grey = text => typeof(process) != #undefined ? `\u001b[2m${text}\u001b[0m` : text
 
 let passText = green(`PASS`)
 let failText = red(`FAIL`)
@@ -27,20 +27,20 @@ let testFailedCounter = ref(0)
 let testTimeoutCounter = ref(0)
 
 let testText = (name, index) => {
-  let index = index->Js.Int.toString
-  let total = testCounter.contents->Js.Int.toString
-  Js.Console.log(`${index}/${total}: ${name}`)
+  let index = index->Int.toString
+  let total = testCounter.contents->Int.toString
+  Console.log(`${index}/${total}: ${name}`)
 }
 
 let passCounter = ref(0)
 let failCounter = ref(0)
 
-let total = () => (passCounter.contents + failCounter.contents)->Js.Int.toString
+let total = () => (passCounter.contents + failCounter.contents)->Int.toString
 
 let queue = ref(list{})
 
 let startRunningTests = onEnd => {
-  let tests = queue.contents->Belt.List.reverse
+  let tests = queue.contents->List.reverse
   let rec runNextTest = tests => {
     switch tests {
     | list{test, ...rest} => test(() => runNextTest(rest))
@@ -62,90 +62,90 @@ let formatMessage = message =>
 
 let assertion = (~message=?, ~operator=?, compare, a, b) => {
   if compare(a, b) {
-    incr(passCounter)
-    Js.Console.log(`  ${passText}${formatMessage(message)}`)
+    Int.Ref.increment(passCounter)
+    Console.log(`  ${passText}${formatMessage(message)}`)
   } else {
-    incr(failCounter)
-    Js.Console.log(`  ${failText}${formatMessage(message)}`)
-    Js.Console.log(`    ---`)
+    Int.Ref.increment(failCounter)
+    Console.log(`  ${failText}${formatMessage(message)}`)
+    Console.log(`    ---`)
     switch operator {
-    | Some(operator) => Js.Console.log(`    ${pink("operator")}: ${operator}`)
+    | Some(operator) => Console.log(`    ${pink("operator")}: ${operator}`)
     | None => ()
     }
-    Js.Console.log2(`    ${pink("left")}: `, a)
-    Js.Console.log2(`    ${pink("right")}:`, b)
-    Js.Console.log(`    ...`)
+    Console.log2(`    ${pink("left")}: `, a)
+    Console.log2(`    ${pink("right")}:`, b)
+    Console.log(`    ...`)
   }
 }
 
 let doesNotThrow = (~message=?, func: unit => unit) => {
   try {
     func()
-    incr(passCounter)
-    Js.Console.log(`  ${passText}${formatMessage(message)}`)
+    Int.Ref.increment(passCounter)
+    Console.log(`  ${passText}${formatMessage(message)}`)
   } catch {
   | exn =>
-    incr(failCounter)
-    Js.Console.log(`  ${failText}${formatMessage(message)}`)
-    Js.Console.log(`    ---`)
-    Js.Console.log(`    ${pink("operator")}: doesNotThrow`)
-    Js.Console.log2(`    ${pink("error")}:`, exn)
-    Js.Console.log(`    ...`)
+    Int.Ref.increment(failCounter)
+    Console.log(`  ${failText}${formatMessage(message)}`)
+    Console.log(`    ---`)
+    Console.log(`    ${pink("operator")}: doesNotThrow`)
+    Console.log2(`    ${pink("error")}:`, exn)
+    Console.log(`    ...`)
   }
 }
 
 let throws = (~message=?, ~test: option<exn => bool>=?, func: unit => unit) => {
   try {
     func()
-    incr(failCounter)
-    Js.Console.log(`  ${failText}${formatMessage(message)}`)
+    Int.Ref.increment(failCounter)
+    Console.log(`  ${failText}${formatMessage(message)}`)
   } catch {
   | exn =>
     switch test {
     | Some(test) if test(exn) == false =>
-      incr(failCounter)
-      Js.Console.log(`  ${failText}${formatMessage(message)}`)
+      Int.Ref.increment(failCounter)
+      Console.log(`  ${failText}${formatMessage(message)}`)
     | _ =>
-      incr(passCounter)
-      Js.Console.log(`  ${passText}${formatMessage(message)}`)
+      Int.Ref.increment(passCounter)
+      Console.log(`  ${passText}${formatMessage(message)}`)
     }
   }
 }
 
 let todo = message => {
-  Js.Console.log(`  ${todoText}${formatMessage(Some(message))}`)
+  Console.log(`  ${todoText}${formatMessage(Some(message))}`)
 }
 
 let pass = (~message=?, ()) => {
-  incr(passCounter)
-  Js.Console.log(`  ${passText}${formatMessage(message)}`)
+  Int.Ref.increment(passCounter)
+  Console.log(`  ${passText}${formatMessage(message)}`)
 }
 
 let fail = (~message=?, ()) => {
-  incr(failCounter)
-  Js.Console.log(`  ${failText}${formatMessage(message)}`)
-  Js.Console.log(`    ---`)
-  Js.Console.log(`    ${pink("operator")}: fail`)
-  Js.Console.log(`    ...`)
+  Int.Ref.increment(failCounter)
+  Console.log(`  ${failText}${formatMessage(message)}`)
+  Console.log(`    ---`)
+  Console.log(`    ${pink("operator")}: fail`)
+  Console.log(`    ...`)
 }
 
 let testAsync = (name, ~timeout=5_000, func) => {
   if running.contents {
-    Js.Console.error(
+    Console.error(
       red(`# Cannot add testAsync("${name}", ...), tests must be defined at the top level`),
     )
   } else {
-    incr(testCounter)
+    Int.Ref.increment(testCounter)
     let index = testCounter.contents
     registerTest(resolve => {
       let failedAtStart = failCounter.contents
       let passedAtStart = passCounter.contents
       testText(name, index)
       try {
-        let timeoutId = Js.Global.setTimeout(() => {
-          let message = Some(`Timed out after ${timeout->Js.Int.toString}ms`)
-          incr(testTimeoutCounter)
-          Js.Console.log(`  ${failText}${formatMessage(message)}`)
+        let timeoutId = setTimeout(() => {
+          let message = Some(`Timed out after ${timeout->Int.toString}ms`)
+          Int.Ref.increment(testTimeoutCounter)
+          Console.log(`  ${failText}${formatMessage(message)}`)
           resolve()
         }, timeout)
         func((~planned=?, ()) => {
@@ -160,17 +160,17 @@ let testAsync = (name, ~timeout=5_000, func) => {
             )
           | None => ()
           }
-          Js.Global.clearTimeout(timeoutId)
+          clearTimeout(timeoutId)
           if failCounter.contents > failedAtStart {
-            incr(testFailedCounter)
+            Int.Ref.increment(testFailedCounter)
           } else {
-            incr(testPassedCounter)
+            Int.Ref.increment(testPassedCounter)
           }
           resolve()
         })
       } catch {
       | exn =>
-        Js.Console.error(exn)
+        Console.error(exn)
         exit(1)
       }
     })
@@ -188,7 +188,7 @@ let testAsyncWith = (~setup, ~teardown=?, name, ~timeout=?, func) => {
         }
       } catch {
       | exn =>
-        Js.Console.error(exn)
+        Console.error(exn)
         exit(1)
       }
       callback(~planned?, ())
@@ -196,16 +196,14 @@ let testAsyncWith = (~setup, ~teardown=?, name, ~timeout=?, func) => {
   })
 }
 
-let createTestAsyncWith = (~setup, ~teardown=?) => (name, ~timeout=?, func) =>
-  testAsyncWith(~setup, ~teardown?, name, ~timeout?, func)
+let createTestAsyncWith = (~setup, ~teardown=?) =>
+  (name, ~timeout=?, func) => testAsyncWith(~setup, ~teardown?, name, ~timeout?, func)
 
 let test = (name, func) => {
   if running.contents {
-    Js.Console.error(
-      red(`# Cannot add test("${name}", ...), tests must be defined at the top level`),
-    )
+    Console.error(red(`# Cannot add test("${name}", ...), tests must be defined at the top level`))
   } else {
-    incr(testCounter)
+    Int.Ref.increment(testCounter)
     let index = testCounter.contents
     registerTest(resolve => {
       let failedAtStart = failCounter.contents
@@ -215,13 +213,13 @@ let test = (name, func) => {
         func()
       } catch {
       | exn =>
-        Js.Console.error(exn)
+        Console.error(exn)
         exit(1)
       }
       if failCounter.contents > failedAtStart {
-        incr(testFailedCounter)
+        Int.Ref.increment(testFailedCounter)
       } else {
-        incr(testPassedCounter)
+        Int.Ref.increment(testPassedCounter)
       }
       resolve()
     })
@@ -239,8 +237,8 @@ let testWith = (~setup, ~teardown=?, name, func) => {
   })
 }
 
-let createTestWith = (~setup, ~teardown=?) => (name, func) =>
-  testWith(~setup, ~teardown?, name, func)
+let createTestWith = (~setup, ~teardown=?) =>
+  (name, func) => testWith(~setup, ~teardown?, name, func)
 
 let autoBoot = ref(true)
 
@@ -248,16 +246,14 @@ let runTests = () => {
   running := true
 
   startRunningTests(() => {
-    Js.Console.log(``)
-    Js.Console.log(
-      grey(`# Ran ${testCounter.contents->Belt.Int.toString} tests (${total()} assertions)`),
-    )
-    Js.Console.log(grey(`# ${testPassedCounter.contents->Belt.Int.toString} passed`))
-    Js.Console.log(
+    Console.log(``)
+    Console.log(grey(`# Ran ${testCounter.contents->Int.toString} tests (${total()} assertions)`))
+    Console.log(grey(`# ${testPassedCounter.contents->Int.toString} passed`))
+    Console.log(
       grey(
         `# ${(testFailedCounter.contents + testTimeoutCounter.contents)
-            ->Belt.Int.toString} failed${testTimeoutCounter.contents > 0
-            ? ` (${testTimeoutCounter.contents->Belt.Int.toString} timed out)`
+            ->Int.toString} failed${testTimeoutCounter.contents > 0
+            ? ` (${testTimeoutCounter.contents->Int.toString} timed out)`
             : ``}`,
       ),
     )
@@ -270,7 +266,7 @@ let runTests = () => {
   })
 }
 
-let _ = Js.Global.setTimeout(() => {
+let _ = setTimeout(() => {
   if autoBoot.contents {
     runTests()
   }

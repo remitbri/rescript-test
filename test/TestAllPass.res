@@ -1,4 +1,3 @@
-open RescriptCore
 open Test
 
 let equal = (~message=?, a, b) => assertion(~message?, ~operator="equal", (a, b) => a === b, a, b)
@@ -21,13 +20,13 @@ test("Equals", () => {
 })
 
 let isCharCode = (a, b) => {
-  a->String.charCodeAt(0) === b
+  a->String.charCodeAt(0) == Some(b)
 }
 
 test("Custom comparator", () => {
   let a = "a"
 
-  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97.0)
+  assertion(~message="Char code should match", ~operator="isCharCode", isCharCode, a, 97)
 })
 
 type user = {username: string, id: string}
@@ -41,14 +40,14 @@ test("DeepEquals", () => {
 let testWithSetup = createTestWith(~setup=() => ref(0))
 
 testWithSetup("Setup", someRef => {
-  incr(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 1)
 })
 
 testWithSetup("Setup", someRef => {
   equal(someRef.contents, 0)
-  incr(someRef)
-  incr(someRef)
+  Int.Ref.increment(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 2)
 })
 
@@ -58,14 +57,14 @@ let testWithSetupAndTeardown = createTestWith(
 )
 
 testWithSetupAndTeardown("Setup & teardown", someRef => {
-  incr(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 1)
 })
 
 testWithSetupAndTeardown("Setup & teardown 2", someRef => {
   equal(someRef.contents, 0)
-  incr(someRef)
-  incr(someRef)
+  Int.Ref.increment(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 2)
 })
 
@@ -75,15 +74,15 @@ let testAsyncWithSetupAndTeardown = createTestAsyncWith(
 )
 
 testAsyncWithSetupAndTeardown("Async setup & teardown", (someRef, callback) => {
-  incr(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 1)
   callback()
 })
 
 testAsyncWithSetupAndTeardown("Async setup & teardown 2", (someRef, callback) => {
   equal(someRef.contents, 0)
-  incr(someRef)
-  incr(someRef)
+  Int.Ref.increment(someRef)
+  Int.Ref.increment(someRef)
   equal(someRef.contents, 2)
   callback()
 })

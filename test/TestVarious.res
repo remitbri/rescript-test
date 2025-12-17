@@ -1,4 +1,3 @@
-open RescriptCore
 open Belt
 open Test
 
