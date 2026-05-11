@@ -1,3 +1,9 @@
+## 8.0.1
+
+Changes:
+
+- Prepare for ReScript 13 (d789815)
+
 ## 8.0.0
 
 Changes:
