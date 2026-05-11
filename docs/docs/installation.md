@@ -24,12 +24,12 @@ In `sources`:
 
 :::note
 Notice the `type: "dev"`, it makes the ReScript compiler only compile those files when your project is the one you're working on (meaning it won't compile those files when your project is installed as a dependency).
-::: 
+:::
 
-In `bs-dev-dependencies`:
+In `dev-dependencies`:
 
 ```diff title="bsconfig.json"
- "bs-dev-dependencies": [
+ "dev-dependencies": [
 +  "rescript-test"
  ]
 ```
